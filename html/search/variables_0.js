@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['current_5fcoordinate_0',['current_coordinate',['../classbase_agent_1_1_base_agent.html#ad20baf5dadd44b67f2991ffe35e43718',1,'baseAgent::BaseAgent']]]
+  ['actions_0',['actions',['../classoptimal_policy_1_1_optimal_policy.html#aea53c41bb053e57c8108c75114064b28',1,'optimalPolicy::OptimalPolicy']]]
 ];

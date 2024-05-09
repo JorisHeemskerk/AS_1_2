@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['state_0',['state',['../namespacestate.html',1,'']]]
+  ['optimalpolicy_0',['optimalPolicy',['../namespaceoptimal_policy.html',1,'']]]
 ];

@@ -27,6 +27,35 @@ class State:
         self.reward = reward
         self.is_terminal = is_terminal
 
+    def __hash__(self)-> int:
+      """
+      Hash function for State.
+      
+      This function uses the static member variables 
+      to create a unique hash for the class.
+
+      NOTE: Changing any of the variables after initialization 
+      will cause a different hash to be generated.
+      
+      @return int with hash
+      """
+      return hash((self.position, self.reward, self.is_terminal))
+
+    def __eq__(self, rhs: 'State')-> bool:
+        """
+        == operator for State.
+
+        All private member variables should be the same 
+        for the class to be considered equal.
+
+        @param rhs: State object to compare to lhs
+        
+        @return bool with true if rhs is equal to lhs
+        """
+        return (self.position == rhs.position) and \
+            (self.reward == rhs.reward) and \
+            (self.is_terminal == rhs.is_terminal)
+
     def __str__(self, colour: str = "\033[0m") -> str:
         """
         Stringify current state.

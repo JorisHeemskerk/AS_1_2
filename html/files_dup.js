@@ -5,5 +5,6 @@ var files_dup =
     [ "basePolicy.py", "base_policy_8py.html", "base_policy_8py" ],
     [ "main.py", "main_8py.html", "main_8py" ],
     [ "maze.py", "maze_8py.html", "maze_8py" ],
+    [ "optimalPolicy.py", "optimal_policy_8py.html", "optimal_policy_8py" ],
     [ "state.py", "state_8py.html", "state_8py" ]
 ];

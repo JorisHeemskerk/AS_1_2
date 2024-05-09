@@ -1,3 +1,4 @@
+from multipledispatch import dispatch
 import numpy as np
 
 from action import Action
@@ -35,7 +36,8 @@ class Maze:
         for x in range(grid_shape[0]):
             for y in range(grid_shape[1]):
                 self.states[x,y] = State((x,y), rewards[x,y], False)
-
+    
+    @dispatch(tuple)
     def __getitem__(self, coordinate: tuple[int, int])-> State:
         """
         Indexing dunder method. 
@@ -52,11 +54,33 @@ class Maze:
         except IndexError:
             raise IndexError(
                 f"Index out of range."
-                f" Tried accessing index {coordinate} from `self.states, "
+                f" Tried accessing index {coordinate} from `self.states`, "
                 f"which has shape of {self.states.shape}"
             )
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+
+    @dispatch(State)
+    def __getitem__(self, item: State)-> State:
+        """
+        Indexing dunder method. 
+
+        This method checks if a given state is present in the class.
+        Throws error if `item` is not found.
+
+        @param item: State object to look for
+
+        @return State with requested State
+        """
+        for row in self.states:
+            for state in row:
+                if state == item:
+                    return state
+        raise IndexError(
+            f"Item not found."
+            f" Looking for State {item} in `self.states`, "
+            f"which was not found in maze:\n {str(self)}"
+        )
 
     def set_rewards(self, rewards: np.ndarray)-> None:
         """
@@ -171,15 +195,15 @@ class Maze:
         reversed_transformed_states = self.states.T[::-1]
         for y, row in enumerate(reversed_transformed_states[:-1]):
             for x, state in enumerate(row.tolist()):
-                if (x, self.states.shape[1]-1-y) == agent_coordinate:
+                if (x, self.states.shape[1] - 1 - y) == agent_coordinate:
                     output += state.__str__(agent_colour) + " │ "
                 else:
                     output += str(state) + " │ "
             output += f"\n├{deviding_line}┤\n│ "
 
         # different formatting for last line
-        for x, state in enumerate(row.tolist()):
-            if (x, self.states.shape[1]-1-\
+        for x, state in enumerate(reversed_transformed_states[-1].tolist()):
+            if (x, self.states.shape[1] - \
             reversed_transformed_states.shape[0]) == agent_coordinate:
                 output += state.__str__(agent_colour) + " │ "
             else:

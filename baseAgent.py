@@ -39,11 +39,15 @@ class BaseAgent:
         """
         while True:
             try:
+                action = self.policy.select_action(
+                    self.maze[self.current_coordinate]
+                )
+                if action == None:
+                    break
+                
                 self.current_coordinate = self.maze.step(
                     self.current_coordinate, 
-                    self.policy.select_action(
-                        self.maze[self.current_coordinate]
-                    )
+                    action
                 )
                 break
             except IndexError:
