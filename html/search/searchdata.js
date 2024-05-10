@@ -1,10 +1,10 @@
 var indexSectionsWithContent =
 {
-  0: "abcdfilmoprsuv",
+  0: "abcdfgilmoprsuv",
   1: "abfmos",
   2: "abmos",
   3: "abmos",
-  4: "acmsv",
+  4: "acgmsv",
   5: "acdilmprsu"
 };
 

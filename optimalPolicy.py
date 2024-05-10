@@ -65,7 +65,7 @@ class OptimalPolicy(BasePolicy):
         self, 
         maze: Maze, 
         threshold: Annotated[float, FloatRange(0.0, float("inf"))],
-        discount: Annotated[float, FloatRange(0.0, 1.0)]=0.9,
+        discount: Annotated[float, FloatRange(0.0, 1.0)],
         visualise: bool=False
     )-> None:
         """
@@ -80,24 +80,29 @@ class OptimalPolicy(BasePolicy):
 
         self.maze = maze
         self.actions = self._determine_optimal_policy(
-            threshold, 
-            discount, 
-            visualise
+            self._value_iteration(
+                threshold, 
+                discount, 
+                visualise
+            ), 
+            discount
         )
+        if visualise:
+            print(f"\033[32m{'─'*47}\n\t\tOptimal Policy:\n{'─'*47}\033[0m")
+            self.visualise(self.maze)
 
     @check_annotated
-    def _determine_optimal_policy(
+    def _value_iteration(
         self, 
         threshold: Annotated[float, FloatRange(0.0, float("inf"))],
-        discount: Annotated[float, FloatRange(0.0, 1.0)]=0.9,
+        discount: Annotated[float, FloatRange(0.0, 1.0)],
         visualise: bool=False
-    )-> dict[State : Action]:
+    )-> dict[State : float]:
         """
-        Determine optimal policy for given `self.maze`.
+        Value iteration
 
-        This function performs the bellman function on the MDP
-        in order to calculate the optimal policy 
-        (using the value iteration)
+        Perform bellman equasion on MDP, given provided parameters,
+        in order to calculate each state's value.
         
         @param threshold: float greater than 0.0 with threshold for
         when to stop converging
@@ -105,9 +110,8 @@ class OptimalPolicy(BasePolicy):
         @param visualise: print value matrix after each iteration
         if true
 
-        @return dict[State : Action] with optimal policy
+        @return dict[State : float] with optimal policy
         """
-        actions = {state: None for state in self.maze.states.flatten()}
         previous_values = {state: 0 for state in self.maze.states.flatten()}
         delta = float("inf")
         iteration = 0
@@ -122,47 +126,19 @@ class OptimalPolicy(BasePolicy):
                     new_values[state] = 0
                     continue
 
-                # find possible actions
-                possible_actions = {}
-                for action in [
-                    Action.UP, 
-                    Action.DOWN, 
-                    Action.LEFT, 
-                    Action.RIGHT
-                ]:
-                    try:
-                        destination = self.maze.step(
-                            state.position, action
-                        )
-                        possible_actions[action] = self.maze[destination]
-                    except:
-                        continue
-
                 # determine new value using $V(s) \leftarrow 
                 # {max}_a \sum_{s',r}^{} 
                 # p(s', r | s, a) [r + \gamma V(s')]$
-                expected_values = [
-                    (
-                        action, 
-                        state.reward + discount * previous_values[state]
-                    ) for action, state in possible_actions.items()
-                ]
-                # extract max value
-                max_value = max(
-                    [expected_value[1] for expected_value in expected_values]
-                )
-                # save best action for eventual 
-                for action, value in expected_values:
-                    if value == max_value:
-                        actions[state] = action
-                        break
-                # save maximal value
-                new_values[state] = max_value
+                new_values[state]  = max([
+                    state.reward + discount * previous_values[state] 
+                    for state in self.maze.get_destinations(state).values()
+                ])
 
                 # calculate new delta
                 delta = max(
-                    [delta, previous_values[state] - new_values[state]]
+                    [delta, abs(previous_values[state] - new_values[state])]
                 )
+
             iteration += 1 
             previous_values = new_values
 
@@ -172,6 +148,40 @@ class OptimalPolicy(BasePolicy):
                     f"with current delta of {delta}:"
                 )
                 print(self.values_in_maze_to_str(new_values))
+        return previous_values
+
+    @check_annotated
+    def _determine_optimal_policy(
+        self, 
+        values: dict[State: float],
+        discount: Annotated[float, FloatRange(0.0, 1.0)]
+    )-> dict[State : Action]:
+        """
+        Determine optimal policy for given `self.maze`.
+
+        This function performs the bellman function on the MDP
+        in order to calculate the optimal policy 
+        (using the value iteration)
+
+        @param values: Dictionary with values for each state.
+        @param discount: discount for future values/states
+
+        #return dict[State : Action] with optimal policy for each State.
+        """
+        actions = {state: None for state in self.maze.states.flatten()}
+
+        for state in self.maze.states.flatten():
+            # determine best action for state using $V(s) \leftarrow 
+            # {argmax}_a \sum_{s',r}^{} 
+            # p(s', r | s, a) [r + \gamma V(s')]$
+            best_action_return = float("-inf")
+            for action, destination_state in \
+                self.maze.get_destinations(state).items():
+                new_action_return = destination_state.reward + \
+                    discount * values[destination_state]
+                if  new_action_return> best_action_return:
+                    best_action_return = new_action_return
+                    actions[state] = action
         return actions
 
     def values_in_maze_to_str(self, values: dict[State : float])-> str:

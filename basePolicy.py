@@ -52,6 +52,8 @@ class BasePolicy:
         \n├────────────────┼────────────────┼────────────────┤
         \n│ ( 0,0 ), a = X │ ( 1,0 ), a = ◄ │ ( 2,0 ), a = ◄ │
         \n└────────────────┴────────────────┴────────────────┘
+
+        @param maze: Maze object to visualise policy in.
         """
 
         action_to_arrow = {

@@ -28,12 +28,9 @@ def main()-> None:
     print(f"\033[32m{'─'*43}\n\t\tMaze layout\n{'─'*43}\033[0m")
     print(maze.__str__(agent.current_coordinate))
 
-    # policy = BasePolicy()
     print(f"\033[32m{'─'*49}\n\t\tOptimizing Policy\n{'─'*49}\033[0m")
-    policy = OptimalPolicy(maze, 0.01, 0.99, True)
+    policy = OptimalPolicy(maze, 0.01, 1, True)
 
-    print(f"\033[32m{'─'*53}\n\t\tOptimal Policy Found:\n{'─'*53}\033[0m")
-    policy.visualise(maze)
 
     print(f"\033[32m{'─'*45}\n\t\tAgent actions\n{'─'*45}\033[0m")
     # Assign policy to agent

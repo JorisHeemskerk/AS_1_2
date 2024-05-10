@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['validate_5fvalue_0',['validate_value',['../classoptimal_policy_1_1_float_range.html#a29a74d98485b4c87180fd69d6fb8f488',1,'optimalPolicy::FloatRange']]],
-  ['values_5fin_5fmaze_5fto_5fstr_1',['values_in_maze_to_str',['../classoptimal_policy_1_1_optimal_policy.html#a55ca5293ebc323f6e785c15d4b51af76',1,'optimalPolicy::OptimalPolicy']]],
-  ['visualise_2',['visualise',['../classbase_policy_1_1_base_policy.html#af66eb2f00af025b0e31717ed5355564b',1,'basePolicy::BasePolicy']]]
+  ['select_5faction_0',['select_action',['../classbase_policy_1_1_base_policy.html#a83f66406430572be6e124e8cb682fd71',1,'basePolicy.BasePolicy.select_action()'],['../classoptimal_policy_1_1_optimal_policy.html#ad784b9089f3e495b13c83da1c9524841',1,'optimalPolicy.OptimalPolicy.select_action()']]],
+  ['set_5frewards_1',['set_rewards',['../classmaze_1_1_maze.html#a0d9f3a3b09a07228c76d296728e13f18',1,'maze::Maze']]],
+  ['set_5fterminal_2',['set_terminal',['../classmaze_1_1_maze.html#ad5c3c8be15e77af929b5115e64e7d7aa',1,'maze::Maze']]],
+  ['step_3',['step',['../classmaze_1_1_maze.html#a89b9cb89810e50e176225d0e16eedc14',1,'maze::Maze']]]
 ];

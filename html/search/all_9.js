@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['policy_0',['policy',['../classbase_agent_1_1_base_agent.html#ac5610307d86a674571967c1cdea27504',1,'baseAgent::BaseAgent']]],
-  ['position_1',['position',['../classstate_1_1_state.html#aa7b47196907c3621937a99925a66123e',1,'state::State']]]
+  ['optimalpolicy_0',['optimalPolicy',['../namespaceoptimal_policy.html',1,'']]],
+  ['optimalpolicy_1',['OptimalPolicy',['../classoptimal_policy_1_1_optimal_policy.html',1,'optimalPolicy']]],
+  ['optimalpolicy_2epy_2',['optimalPolicy.py',['../optimal_policy_8py.html',1,'']]]
 ];

@@ -160,6 +160,44 @@ class Maze:
         
         return new_coordinate
 
+    def get_destinations(self, state: State)-> dict[Action: State]:
+        """
+        Get possible destinations from given State.
+
+        Try all possible actions, 
+        and return with corresponding destinations.
+        If state is terminal, no destinations are returned.
+
+        @param state: State object to find destinations for
+
+        @return dict[Action: State] with each possible Action along with
+        corresponding destination State. Can be empty
+        """
+        # Only look for the best action if a state is not terminal
+        if state.is_terminal:
+            return {}
+
+        possible_destinations: dict[Action: State] = {}
+        for action in [
+            Action.UP, 
+            Action.DOWN, 
+            Action.LEFT, 
+            Action.RIGHT
+        ]:
+            try:
+                destination = self.step(state.position, action)
+                possible_destinations[action] = self.states[destination]
+            except:
+                continue
+
+        # at least 1 action should be possible from given state, 
+        # as we know it to no longer be terminal
+        assert len(possible_destinations.keys()) > 0, \
+            "Your given state does not seem to have any neighbours that can " \
+            f"be reached with any action. State: {state}."
+        
+        return possible_destinations
+
     def __str__(
         self, 
         agent_coordinate: tuple[int, int]=None, 
