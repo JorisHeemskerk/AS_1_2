@@ -1,12 +1,14 @@
 import numpy as np
 
 from baseAgent import BaseAgent
+from probabilityAgent import ProbabilityAgent
 from basePolicy import BasePolicy
 from optimalPolicy import OptimalPolicy
 from maze import Maze
 
 def main()-> None:
     maze_shape = (4,4)
+    probability = 0.7
 
     rewards = np.array([
         [10,  -1,  -1,  -1],
@@ -22,15 +24,19 @@ def main()-> None:
     maze.set_terminal((0,0))
     maze.set_terminal((3,3))
 
-    agent = BaseAgent(maze, BasePolicy(), (2,0))
-
+    agent = ProbabilityAgent(maze, BasePolicy(), (2,0), probability=probability)
 
     print(f"\033[32m{'─'*43}\n\t\tMaze layout\n{'─'*43}\033[0m")
     print(maze.__str__(agent.current_coordinate))
 
     print(f"\033[32m{'─'*49}\n\t\tOptimizing Policy\n{'─'*49}\033[0m")
-    policy = OptimalPolicy(maze, 0.01, 1, True)
-
+    policy = OptimalPolicy(
+        maze=maze, 
+        threshold=0.01,
+        discount=1,
+        probability=probability,
+        visualise=True
+    )
 
     print(f"\033[32m{'─'*45}\n\t\tAgent actions\n{'─'*45}\033[0m")
     # Assign policy to agent
@@ -40,6 +46,7 @@ def main()-> None:
     # keep going until terminate state is reached
     while not maze[agent.current_coordinate].is_terminal:
         agent.act(True)
+
 
 if __name__ == "__main__":
     main()

@@ -1,54 +1,11 @@
-from dataclasses import dataclass
-import inspect
 import numpy as np
-from typing import Annotated, get_type_hints
+from typing import Annotated
 
 from action import Action
 from basePolicy import BasePolicy
+from floatRange import FloatRange, check_annotated
 from maze import Maze
 from state import State
-
-
-def check_annotated(func)-> None:
-    """
-    Checker wrapper function to force type annotations.
-
-    @param func: function to wrap around
-    """
-    hints = get_type_hints(func, include_extras=True)
-    spec = inspect.getfullargspec(func)
-    def wrapper(*args, **kwargs):
-        for idx, arg_name in enumerate(spec[0]):
-            hint = hints.get(arg_name)
-            validators = getattr(hint, '__metadata__', None)
-            if not validators:
-                continue
-            for validator in validators:
-                validator.validate_value(args[idx])
-        return func(*args, **kwargs)
-    return wrapper
-
-
-@dataclass
-class FloatRange:
-    """
-    FloatRange class
-
-    This class is used to limit the values for floats in certain parameters
-    """
-    min: float
-    max: float
-
-    def validate_value(self, x: float)-> None:
-        """
-        Validation function for value using `FloatRange`
-
-        provided `x` should be between self.min and self.max (inclusive)
-
-        @param x: float to validate
-        """
-        if not (self.min <= x <= self.max):
-            raise ValueError(f'{x} must be in range [{self.min}, {self.max}].')
         
 
 class OptimalPolicy(BasePolicy):
@@ -66,6 +23,7 @@ class OptimalPolicy(BasePolicy):
         maze: Maze, 
         threshold: Annotated[float, FloatRange(0.0, float("inf"))],
         discount: Annotated[float, FloatRange(0.0, 1.0)],
+        probability: Annotated[float, FloatRange(0.0, 1.0)]=1.0,
         visualise: bool=False
     )-> None:
         """
@@ -82,10 +40,12 @@ class OptimalPolicy(BasePolicy):
         self.actions = self._determine_optimal_policy(
             self._value_iteration(
                 threshold, 
-                discount, 
+                discount,
+                probability, 
                 visualise
             ), 
-            discount
+            discount,
+            probability
         )
         if visualise:
             print(f"\033[32m{'─'*47}\n\t\tOptimal Policy:\n{'─'*47}\033[0m")
@@ -96,6 +56,7 @@ class OptimalPolicy(BasePolicy):
         self, 
         threshold: Annotated[float, FloatRange(0.0, float("inf"))],
         discount: Annotated[float, FloatRange(0.0, 1.0)],
+        probability: Annotated[float, FloatRange(0.0, 1.0)]=1.0,
         visualise: bool=False
     )-> dict[State : float]:
         """
@@ -107,6 +68,7 @@ class OptimalPolicy(BasePolicy):
         @param threshold: float greater than 0.0 with threshold for
         when to stop converging
         @param discount: discount for future values/states
+        @param probability: probability for any given action to succeed
         @param visualise: print value matrix after each iteration
         if true
 
@@ -129,10 +91,29 @@ class OptimalPolicy(BasePolicy):
                 # determine new value using $V(s) \leftarrow 
                 # {max}_a \sum_{s',r}^{} 
                 # p(s', r | s, a) [r + \gamma V(s')]$
-                new_values[state]  = max([
-                    state.reward + discount * previous_values[state] 
-                    for state in self.maze.get_destinations(state).values()
-                ])
+                values_all_actions = []
+                destionation_states = self.maze.get_destinations(state).values()
+                for destination_state in destionation_states:
+                # P * (r + \gamma * V(destination_state)) + sum(
+                #   ((1-P)/n_alternatives) * (
+                #       r(alternative) + \gamma * V(alternative)
+                #   ) for alternative in alternatives
+                # )
+                    values_all_actions.append(probability * (
+                        destination_state.reward + discount * previous_values[destination_state] 
+                    ) + sum([
+                        (1.0 - probability) / 
+                        (len(list(destionation_states)) - 1) * (
+                            alternative.reward + \
+                            discount * previous_values[alternative]
+                        ) for alternative in [
+                            alternative for alternative in \
+                            destionation_states \
+                            if alternative != destination_state
+                        ]
+                    ]))
+                new_values[state] = max(values_all_actions)
+
 
                 # calculate new delta
                 delta = max(
@@ -154,7 +135,8 @@ class OptimalPolicy(BasePolicy):
     def _determine_optimal_policy(
         self, 
         values: dict[State: float],
-        discount: Annotated[float, FloatRange(0.0, 1.0)]
+        discount: Annotated[float, FloatRange(0.0, 1.0)],
+        probability: Annotated[float, FloatRange(0.0, 1.0)]=1.0
     )-> dict[State : Action]:
         """
         Determine optimal policy for given `self.maze`.
@@ -165,6 +147,7 @@ class OptimalPolicy(BasePolicy):
 
         @param values: Dictionary with values for each state.
         @param discount: discount for future values/states
+        @param probability: probability for any given action to succeed
 
         #return dict[State : Action] with optimal policy for each State.
         """
@@ -175,10 +158,26 @@ class OptimalPolicy(BasePolicy):
             # {argmax}_a \sum_{s',r}^{} 
             # p(s', r | s, a) [r + \gamma V(s')]$
             best_action_return = float("-inf")
-            for action, destination_state in \
-                self.maze.get_destinations(state).items():
-                new_action_return = destination_state.reward + \
+            destionation_states = self.maze.get_destinations(state)
+            for action, destination_state in destionation_states.items():
+                # P * (r + \gamma * V(destination_state)) + sum(
+                #   ((1-P)/n_alternatives) * (
+                #       r(alternative) + \gamma * V(alternative)
+                #   ) for alternative in alternatives
+                # )
+                new_action_return = probability * (
+                    destination_state.reward + \
                     discount * values[destination_state]
+                ) + sum([
+                    (1.0 - probability) / 
+                    (len(list(destionation_states.values())) - 1) * (
+                        alternative.reward + discount * values[alternative]
+                    ) for alternative in [
+                        alternative for alternative in \
+                        destionation_states.values() \
+                        if alternative != destination_state
+                    ]
+                ])
                 if  new_action_return> best_action_return:
                     best_action_return = new_action_return
                     actions[state] = action

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['optimalpolicy_0',['optimalPolicy',['../namespaceoptimal_policy.html',1,'']]]
+  ['main_0',['main',['../namespacemain.html',1,'']]],
+  ['maze_1',['maze',['../namespacemaze.html',1,'']]]
 ];

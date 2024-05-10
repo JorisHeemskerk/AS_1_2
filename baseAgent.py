@@ -1,5 +1,6 @@
-from maze import Maze
 from basePolicy import BasePolicy
+from maze import Maze
+
 
 class BaseAgent:
     """
@@ -42,6 +43,8 @@ class BaseAgent:
                 action = self.policy.select_action(
                     self.maze[self.current_coordinate]
                 )
+                
+                # no actions to be taken if terminal state is reached
                 if action == None:
                     break
                 
