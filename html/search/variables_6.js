@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['policy_0',['policy',['../classbase_agent_1_1_base_agent.html#ac5610307d86a674571967c1cdea27504',1,'baseAgent::BaseAgent']]],
-  ['position_1',['position',['../classstate_1_1_state.html#aa7b47196907c3621937a99925a66123e',1,'state::State']]],
-  ['probability_2',['probability',['../classprobability_agent_1_1_probability_agent.html#a11d94d9b9e429c2ad59f74b967426e7b',1,'probabilityAgent::ProbabilityAgent']]]
+  ['left_0',['LEFT',['../classaction_1_1_action.html#a8ccabebe37c80573c78f6e6f2eb15b33',1,'action::Action']]]
 ];

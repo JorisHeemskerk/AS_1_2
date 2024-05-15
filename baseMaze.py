@@ -5,9 +5,9 @@ from action import Action
 from state import State
 
 
-class Maze:
+class BaseMaze:
     """
-    Maze class.
+    BaseMaze class.
 
     A maze is defined by a set of states, in the shape of a grid.
     @see state.py
@@ -132,7 +132,7 @@ class Maze:
 
         @param start_coordinate: coordinate from where the `action`
             will be performed.
-        @param action: actioin to take at `start_coordinate`
+        @param action: action to take at `start_coordinate`
 
         @return tuple[int, int] with end coordinate
         """
@@ -185,8 +185,8 @@ class Maze:
             Action.RIGHT
         ]:
             try:
-                destination = self.step(state.position, action)
-                possible_destinations[action] = self.states[destination]
+                destination_coord = self.step(state.position, action)
+                possible_destinations[action] = self.states[destination_coord]
             except:
                 continue
 

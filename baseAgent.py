@@ -1,5 +1,5 @@
 from basePolicy import BasePolicy
-from maze import Maze
+from baseMaze import BaseMaze
 
 
 class BaseAgent:
@@ -12,7 +12,7 @@ class BaseAgent:
 
     def __init__(
         self, 
-        maze: Maze, 
+        maze: BaseMaze, 
         policy: BasePolicy, 
         start_coordinate: tuple[int, int]
     )-> None:

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['get_5fdestinations_0',['get_destinations',['../classmaze_1_1_maze.html#a1ceb3f17563889dc4d6b07c7a99bf741',1,'maze::Maze']]]
+  ['draw_5fmatrix_0',['draw_matrix',['../namespaceutils.html#a483fd91b234100f09c916c30bd954d76',1,'utils']]]
 ];

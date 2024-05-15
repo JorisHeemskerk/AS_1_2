@@ -1,7 +1,7 @@
 import random
 
 from action import Action
-from maze import Maze
+from baseMaze import BaseMaze
 from state import State
 
 
@@ -37,7 +37,7 @@ class BasePolicy:
         index = random.randrange(0, 4)
         return [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT][index]
     
-    def visualise(self, maze: Maze)-> None:
+    def visualise(self, maze: BaseMaze)-> None:
         """
         print current Policy.
         
@@ -53,7 +53,7 @@ class BasePolicy:
         \n│ ( 0,0 ), a = X │ ( 1,0 ), a = ◄ │ ( 2,0 ), a = ◄ │
         \n└────────────────┴────────────────┴────────────────┘
 
-        @param maze: Maze object to visualise policy in.
+        @param maze: BaseMaze object to visualise policy in.
         """
 
         action_to_arrow = {

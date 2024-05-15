@@ -3,7 +3,7 @@ from typing import Annotated
 from action import Action
 from basePolicy import BasePolicy
 from floatRange import FloatRange, check_annotated
-from maze import Maze
+from baseMaze import BaseMaze
 from state import State
         
 
@@ -19,7 +19,7 @@ class OptimalPolicy(BasePolicy):
     @check_annotated
     def __init__(
         self, 
-        maze: Maze, 
+        maze: BaseMaze, 
         threshold: Annotated[float, FloatRange(0.0, float("inf"))],
         discount: Annotated[float, FloatRange(0.0, 1.0)],
         probability: Annotated[float, FloatRange(0.0, 1.0)]=1.0,
@@ -61,7 +61,7 @@ class OptimalPolicy(BasePolicy):
         """
         Value iteration
 
-        Perform bellman equasion on MDP, given provided parameters,
+        Perform bellman equation on MDP, given provided parameters,
         in order to calculate each state's value.
         
         @param threshold: float greater than 0.0 with threshold for
@@ -91,23 +91,26 @@ class OptimalPolicy(BasePolicy):
                 # {max}_a \sum_{s',r}^{} 
                 # p(s', r | s, a) [r + \gamma V(s')]$
                 values_all_actions = []
-                destionation_states = self.maze.get_destinations(state).values()
-                for destination_state in destionation_states:
+                destination_states = self.maze.get_destinations(
+                    state
+                ).values()
+                for destination_state in destination_states:
                 # P * (r + \gamma * V(destination_state)) + sum(
                 #   ((1-P)/n_alternatives) * (
                 #       r(alternative) + \gamma * V(alternative)
                 #   ) for alternative in alternatives
                 # )
                     values_all_actions.append(probability * (
-                        destination_state.reward + discount * previous_values[destination_state] 
+                        destination_state.reward + \
+                        discount * previous_values[destination_state] 
                     ) + sum([
                         (1.0 - probability) / 
-                        (len(list(destionation_states)) - 1) * (
+                        (len(list(destination_states)) - 1) * (
                             alternative.reward + \
                             discount * previous_values[alternative]
                         ) for alternative in [
                             alternative for alternative in \
-                            destionation_states \
+                            destination_states \
                             if alternative != destination_state
                         ]
                     ]))

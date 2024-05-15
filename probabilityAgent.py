@@ -5,7 +5,7 @@ from typing import Annotated
 from baseAgent import BaseAgent
 from basePolicy import BasePolicy
 from floatRange import FloatRange, check_annotated
-from maze import Maze
+from baseMaze import BaseMaze
 
 
 class ProbabilityAgent(BaseAgent):
@@ -27,14 +27,14 @@ class ProbabilityAgent(BaseAgent):
     @check_annotated
     def __init__(
         self, 
-        maze: Maze, 
+        maze: BaseMaze, 
         policy: BasePolicy, 
         start_coordinate: tuple[int, int],
         probability: Annotated[float, FloatRange(0.0, 1.0)]=1.0
     )-> None:
         """
         @var $maze
-        **Maze** `Maze` in which the agent is present.
+        **Maze** `BaseMaze` in which the agent is present.
         @var $policy 
         **Policy** `Policy` which the agent uses to act
         @var $current_coordinate 
